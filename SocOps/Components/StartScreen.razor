@@ -1,22 +1,86 @@
-<div class="flex flex-col items-center justify-center min-h-full p-6 bg-gray-50">
-    <div class="text-center max-w-sm">
-        <h1 class="text-4xl font-bold text-gray-900 mb-2">Soc Ops</h1>
-        <p class="text-lg text-gray-600 mb-8">Social Bingo</p>
+<div class="landing-shell">
+    <div class="landing-grid">
+        <section class="landing-story">
+            <span class="landing-eyebrow">Soc Ops · Social Bingo</span>
+            <h1 class="landing-title">Tres variantes de diseño, una sola forma de romper el hielo.</h1>
+            <p class="landing-copy">
+                La portada mezcla el dramatismo de <strong>Midnight Stage</strong>, la claridad de <strong>Split Story</strong>
+                y la modularidad de <strong>Magazine Grid</strong> para abrir workshops, mixers y sesiones de onboarding con más presencia.
+            </p>
 
-        <div class="bg-white rounded-lg p-6 shadow-sm border border-gray-200 mb-8">
-            <h2 class="font-semibold text-gray-800 mb-3">How to play</h2>
-            <ul class="text-left text-gray-600 text-sm space-y-2">
-                <li>• Find people who match the questions</li>
-                <li>• Tap a square when you find a match</li>
-                <li>• Get 5 in a row to win!</li>
-            </ul>
-        </div>
+            <div class="landing-actions">
+                <button
+                    @onclick="OnStart"
+                    class="landing-cta">
+                    Start session
+                </button>
 
-        <button
-            @onclick="OnStart"
-            class="w-full bg-accent text-white font-semibold py-4 px-8 rounded-lg text-lg active:bg-accent-light transition-colors">
-            Start Game
-        </button>
+                <div class="landing-stats" aria-label="game summary">
+                    <div>
+                        <strong>25</strong>
+                        <span>prompts</span>
+                    </div>
+                    <div>
+                        <strong>5-in-row</strong>
+                        <span>to win</span>
+                    </div>
+                    <div>
+                        <strong>Zero setup</strong>
+                        <span>just tap and play</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="landing-stage-card">
+            <div class="landing-panel-label">Midnight Stage</div>
+            <h2>Una apertura con foco, contraste y energía.</h2>
+            <p>
+                Un hero oscuro con luz puntual para hacer que el CTA y el arranque de la dinámica
+                se sientan más memorables.
+            </p>
+        </section>
+
+        <section class="landing-how-card">
+            <div class="landing-panel-label">Split Story</div>
+            <h2>How it works</h2>
+            <ol class="landing-steps">
+                <li>
+                    <strong>Scan the room</strong>
+                    <span>Find someone who matches the prompt on a square.</span>
+                </li>
+                <li>
+                    <strong>Mark the board</strong>
+                    <span>Tap the square after you confirm the match.</span>
+                </li>
+                <li>
+                    <strong>Complete the line</strong>
+                    <span>Build a full row, column, or diagonal to call bingo.</span>
+                </li>
+            </ol>
+        </section>
+
+        <section class="landing-grid-card">
+            <div class="landing-panel-label">Magazine Grid</div>
+            <div class="landing-modules">
+                <article>
+                    <span>Mixers</span>
+                    <strong>Fast icebreaker</strong>
+                </article>
+                <article>
+                    <span>Onboarding</span>
+                    <strong>Shared context</strong>
+                </article>
+                <article>
+                    <span>Workshops</span>
+                    <strong>Live participation</strong>
+                </article>
+                <article>
+                    <span>Events</span>
+                    <strong>Easy replayability</strong>
+                </article>
+            </div>
+        </section>
     </div>
 </div>
 
