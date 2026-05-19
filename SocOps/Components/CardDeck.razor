@@ -1,0 +1,135 @@
+@using SocOps.Data
+
+<div class="deck-shell">
+    <header class="deck-header">
+        <button @onclick="OnBack" class="deck-back">← Back</button>
+
+        <div class="deck-brand">
+            <small>Soc Ops</small>
+            <h1>Card Deck Shuffle</h1>
+        </div>
+
+        <div class="deck-status">@CardsRemaining left</div>
+    </header>
+
+    <section class="deck-intro corporate-card">
+        <div>
+            <span class="corporate-kicker mb-4">Tap to draw</span>
+            <h2 class="deck-title">Open a card, reveal a question, pass it on.</h2>
+            <p class="deck-copy">
+                Every draw comes from a freshly shuffled deck so the room keeps moving.
+            </p>
+        </div>
+
+        <div class="deck-metrics" aria-hidden="true">
+            <div class="deck-metric">
+                <span>Deck</span>
+                <strong>@Deck.Count</strong>
+            </div>
+            <div class="deck-metric">
+                <span>Card</span>
+                <strong>@QuestionNumber</strong>
+            </div>
+            <div class="deck-metric">
+                <span>State</span>
+                <strong>@(IsRevealed ? "Open" : "Hidden")</strong>
+            </div>
+        </div>
+    </section>
+
+    <section class="deck-stage">
+        <button
+            @onclick="HandleCardTap"
+            class="@GetCardClasses()"
+            aria-pressed="@IsRevealed"
+            aria-label="@(IsRevealed ? "Card revealed" : "Tap to reveal a random question")">
+            @if (!IsRevealed)
+            {
+                <span class="deck-card__face deck-card__face--back">
+                    <span class="deck-card__mark">♠</span>
+                    <span class="deck-card__prompt">Tap to draw</span>
+                    <span class="deck-card__subcopy">Random question</span>
+                </span>
+            }
+            else
+            {
+                <span class="deck-card__face deck-card__face--front">
+                    <span class="deck-card__label">Question @QuestionNumber</span>
+                    <span class="deck-card__text">@CurrentQuestion</span>
+                    <span class="deck-card__subcopy deck-card__subcopy--accent">Pass this prompt to the next player</span>
+                </span>
+            }
+        </button>
+    </section>
+
+    <footer class="deck-footer">
+        @if (!IsRevealed)
+        {
+            <div class="deck-hint">Tap the card to reveal the next prompt.</div>
+        }
+        else
+        {
+            <div class="deck-actions">
+                <button @onclick="ShuffleDeck" class="deck-secondary">Shuffle again</button>
+                <button @onclick="DrawNextCard" class="deck-primary">Next card</button>
+            </div>
+        }
+    </footer>
+</div>
+
+@code {
+    [Parameter]
+    public EventCallback OnBack { get; set; }
+
+    private List<string> Deck { get; set; } = new();
+    private int CurrentIndex { get; set; }
+    private bool IsRevealed { get; set; }
+
+    private string CurrentQuestion => Deck.Count == 0 ? string.Empty : Deck[Math.Min(CurrentIndex, Deck.Count - 1)];
+    private int QuestionNumber => Deck.Count == 0 ? 0 : Math.Min(CurrentIndex + 1, Deck.Count);
+    private int CardsRemaining => Deck.Count == 0 ? 0 : Math.Max(Deck.Count - CurrentIndex, 0);
+
+    protected override void OnInitialized()
+    {
+        ShuffleDeck();
+    }
+
+    private void HandleCardTap()
+    {
+        if (!IsRevealed)
+        {
+            IsRevealed = true;
+        }
+    }
+
+    private void DrawNextCard()
+    {
+        if (Deck.Count == 0)
+        {
+            return;
+        }
+
+        CurrentIndex++;
+
+        if (CurrentIndex >= Deck.Count)
+        {
+            ShuffleDeck();
+            return;
+        }
+
+        IsRevealed = false;
+    }
+
+    private void ShuffleDeck()
+    {
+        Deck = Questions.All.OrderBy(_ => Random.Shared.Next()).ToList();
+        CurrentIndex = 0;
+        IsRevealed = false;
+    }
+
+    private string GetCardClasses()
+    {
+        var stateClass = IsRevealed ? "is-revealed" : "is-hidden";
+        return $"deck-card {stateClass}";
+    }
+}

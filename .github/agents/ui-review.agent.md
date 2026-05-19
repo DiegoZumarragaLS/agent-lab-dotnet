@@ -1,7 +1,8 @@
 ---
 name: UI Review
 argument-hint: Optional review area to focus on (or just "start")
-model: Claude Haiku 4.5 (copilot)
+model: GPT-5.4 mini (copilot)
+description: This agent performs an in-depth UI review of a website using Playwright, identifying issues and suggesting improvements.
 tools: ['search', 'execute', 'github/*', 'playwright/*', 'search/usages', 'read/problems', 'web', 'todo', 'agent']
 user-invocable: true
 disable-model-invocation: false

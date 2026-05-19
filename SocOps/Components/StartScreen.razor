@@ -1,50 +1,54 @@
 @using SocOps.Models
 
-<div class="flex flex-col items-center justify-center min-h-full p-6">
-    <div class="corporate-shell corporate-hero w-full max-w-md text-center">
-        <div class="relative flex flex-col gap-6">
-            <div>
-                <span class="corporate-kicker mb-4">Soc Ops</span>
-                <h1 class="text-4xl font-bold text-gray-900 mb-3 leading-tight">Corporate Social Bingo</h1>
-                <p class="text-lg text-gray-600 mx-auto" style="max-width: 24rem;">
-                    Choose a mode for team icebreakers, workshops, and onboarding sessions.
-                </p>
-            </div>
+<div class="start-shell">
+    <section class="corporate-shell start-hero">
+        <div class="start-copy">
+            <span class="corporate-kicker mb-4">Soc Ops</span>
+            <h1 class="start-title">Pick a way to break the ice.</h1>
+            <p class="start-copy__body">
+                Launch a classic bingo board, a checklist sprint, or a one-tap card draw for fast discussion starters.
+            </p>
 
-            <div class="corporate-card p-5 text-left">
-                <h2 class="font-semibold text-gray-800 mb-4">How it works</h2>
-                <div class="corporate-feature-list">
-                    <div class="corporate-feature">
-                        <span class="corporate-dot"></span>
-                        <div>
-                            <div class="font-semibold text-gray-900">Bingo Mode</div>
-                            <div class="text-sm text-gray-600">5x5 board with a free center square.</div>
-                        </div>
-                    </div>
-                    <div class="corporate-feature">
-                        <span class="corporate-dot"></span>
-                        <div>
-                            <div class="font-semibold text-gray-900">Scavenger Hunt</div>
-                            <div class="text-sm text-gray-600">Simple checklist with progress tracking.</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="space-y-2">
-                <button
-                    @onclick="() => OnModeSelected.InvokeAsync(GameMode.Bingo)"
-                    class="corporate-cta py-4 px-8 text-lg transition-all">
-                    Start Bingo
-                </button>
-                <button
-                    @onclick="() => OnModeSelected.InvokeAsync(GameMode.ScavengerHunt)"
-                    class="corporate-cta py-4 px-8 text-lg transition-all">
-                    Start Scavenger Hunt
-                </button>
+            <div class="start-pills" aria-hidden="true">
+                <span>Bingo</span>
+                <span>Checklist</span>
+                <span>Card Draw</span>
             </div>
         </div>
-    </div>
+
+        <div class="start-preview" aria-hidden="true">
+            <div class="start-card start-card--rear"></div>
+            <div class="start-card start-card--middle"></div>
+            <div class="start-card start-card--front">
+                <span>Tap</span>
+                <strong>Draw a prompt</strong>
+            </div>
+        </div>
+    </section>
+
+    <section class="start-mode-grid">
+        <button @onclick="() => OnModeSelected.InvokeAsync(GameMode.Bingo)" class="start-mode-card">
+            <span class="start-mode-card__label">Classic</span>
+            <strong>Bingo</strong>
+            <span>Match prompts across a 5x5 board.</span>
+        </button>
+
+        <button @onclick="() => OnModeSelected.InvokeAsync(GameMode.ScavengerHunt)" class="start-mode-card">
+            <span class="start-mode-card__label">Checklist</span>
+            <strong>Scavenger Hunt</strong>
+            <span>Track quick wins with a simple progress list.</span>
+        </button>
+
+        <button @onclick="() => OnModeSelected.InvokeAsync(GameMode.CardDeck)" class="start-mode-card start-mode-card--deck">
+            <span class="start-mode-card__label">New</span>
+            <strong>Card Deck Shuffle</strong>
+            <span>Tap once, flip a random card, and get a new question.</span>
+        </button>
+    </section>
+
+    <section class="start-footer">
+        <div class="start-footer__note">Built for mixers, workshops, and quick social rounds.</div>
+    </section>
 </div>
 
 @code {

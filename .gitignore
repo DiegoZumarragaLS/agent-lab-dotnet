@@ -51,3 +51,6 @@ artifacts/
 
 # Local
 *.local
+
+# node modules
+node_modules/

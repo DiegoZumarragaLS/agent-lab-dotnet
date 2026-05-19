@@ -50,7 +50,7 @@ public class BingoGameService
             WinningLine = null;
             CurrentGameState = GameState.Playing;
         }
-        else
+        else if (mode == GameMode.ScavengerHunt)
         {
             Board = new();
             ScavengerItems = Questions.QuestionsList
@@ -61,8 +61,14 @@ public class BingoGameService
                     IsCompleted = false
                 })
                 .ToList();
-            WinningLine = null;
             CurrentGameState = GameState.ScavengerHunt;
+        }
+        else
+        {
+            Board = new();
+            ScavengerItems = new();
+            WinningLine = null;
+            CurrentGameState = GameState.CardDeck;
         }
 
         ShowBingoModal = false;
