@@ -1,0 +1,69 @@
+@using Microsoft.AspNetCore.Components
+@using SocOps.Data
+@using SocOps.Models
+@using SocOps.Services
+@inject BingoGameService GameService
+
+<div class="scavenger-shell">
+    <header class="scavenger-header">
+        <button @onclick="OnBack" class="scavenger-back">← Back</button>
+        <div class="scavenger-title">
+            <small>Soc Ops</small>
+            <h1>Scavenger Hunt</h1>
+        </div>
+        <div class="scavenger-status">@CompletedCount / @TotalCount</div>
+    </header>
+
+    <section class="scavenger-progress">
+        <div class="scavenger-progress__label">
+            <span>Progress</span>
+            <span>@ProgressPercentage.ToString("0")%</span>
+        </div>
+        <div class="scavenger-progress__track" aria-hidden="true">
+            <div class="scavenger-progress__fill" style="width: @ProgressPercentage%"></div>
+        </div>
+    </section>
+
+    <ul class="scavenger-list">
+        @foreach (var item in Items)
+        {
+            <li>
+                <button class="@($"scavenger-item {(item.IsCompleted ? "is-complete" : string.Empty)}")" @onclick="() => ToggleItem(item)">
+                    <span class="scavenger-checkbox" aria-hidden="true">@((item.IsCompleted) ? "✓" : string.Empty)</span>
+                    <span class="scavenger-item__text">@item.Text</span>
+                </button>
+            </li>
+        }
+    </ul>
+
+    @if (IsComplete)
+    {
+        <div class="scavenger-complete">Mission complete</div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public EventCallback OnBack { get; set; }
+
+    private List<ScavengerItemData> Items { get; set; } = new();
+
+    private int CompletedCount => Items.Count(i => i.IsCompleted);
+    private int TotalCount => Items.Count;
+    private double ProgressPercentage => TotalCount == 0 ? 0 : CompletedCount * 100.0 / TotalCount;
+    private bool IsComplete => TotalCount > 0 && CompletedCount == TotalCount;
+
+    protected override void OnInitialized()
+    {
+        Items = GameService.ScavengerItems.Count > 0
+            ? GameService.ScavengerItems
+            : Questions.QuestionsList
+                .Select((text, index) => new ScavengerItemData { Id = index, Text = text })
+                .ToList();
+    }
+
+    private void ToggleItem(ScavengerItemData item)
+    {
+        GameService.ToggleScavengerItem(item.Id);
+    }
+}

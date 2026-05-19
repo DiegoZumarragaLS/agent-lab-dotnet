@@ -1,6 +1,6 @@
 ---
 name: cloud-explore
-description: Your goal is to explore potential solutions with a remote coding agent for a given plan.
+description: Your goal is to explore potential solutions with a remote coding agent for a given plan only when remote coding is explicitly requested.
 argument-hint: Optionally specify variations
 ---
 

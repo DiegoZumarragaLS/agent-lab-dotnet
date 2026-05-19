@@ -1,20 +1,29 @@
 using SocOps.Models;
 using System.Text.Json;
 using Microsoft.JSInterop;
+using SocOps.Data;
 
 namespace SocOps.Services;
 
 public class BingoGameService
 {
     private const string STORAGE_KEY = "bingo-game-state";
-    private const int STORAGE_VERSION = 1;
+    private const int STORAGE_VERSION = 3;
 
     private readonly IJSRuntime _jsRuntime;
 
     public GameState CurrentGameState { get; private set; } = GameState.Start;
+    public GameMode CurrentGameMode { get; private set; } = GameMode.Bingo;
     public List<BingoSquareData> Board { get; private set; } = new();
+    public List<ScavengerItemData> ScavengerItems { get; private set; } = new();
     public BingoLine? WinningLine { get; private set; }
     public HashSet<int> WinningSquareIds => BingoLogicService.GetWinningSquareIds(WinningLine);
+    public int ScavengerCompletedCount => ScavengerItems.Count(item => item.IsCompleted);
+    public int ScavengerTotalCount => ScavengerItems.Count;
+    public double ScavengerProgressPercentage => ScavengerTotalCount == 0
+        ? 0
+        : ScavengerCompletedCount * 100.0 / ScavengerTotalCount;
+    public bool ScavengerIsComplete => ScavengerTotalCount > 0 && ScavengerCompletedCount == ScavengerTotalCount;
     public bool ShowBingoModal { get; private set; }
 
     public event Action? OnStateChanged;
@@ -29,13 +38,35 @@ public class BingoGameService
         await LoadGameStateAsync();
     }
 
-    public void StartGame()
+    public void StartGame(GameMode mode = GameMode.Bingo)
     {
-        Board = BingoLogicService.GenerateBoard();
-        WinningLine = null;
-        CurrentGameState = GameState.Playing;
+        CurrentGameMode = mode;
         ShowBingoModal = false;
-        _ = SaveGameStateAsync(); // Fire and forget
+
+        if (mode == GameMode.Bingo)
+        {
+            Board = BingoLogicService.GenerateBoard();
+            ScavengerItems = new();
+            WinningLine = null;
+            CurrentGameState = GameState.Playing;
+        }
+        else
+        {
+            Board = new();
+            ScavengerItems = Questions.QuestionsList
+                .Select((text, index) => new ScavengerItemData
+                {
+                    Id = index,
+                    Text = text,
+                    IsCompleted = false
+                })
+                .ToList();
+            WinningLine = null;
+            CurrentGameState = GameState.ScavengerHunt;
+        }
+
+        ShowBingoModal = false;
+        _ = SaveGameStateAsync();
         NotifyStateChanged();
     }
 
@@ -55,17 +86,33 @@ public class BingoGameService
             }
         }
 
-        _ = SaveGameStateAsync(); // Fire and forget
+        _ = SaveGameStateAsync();
+        NotifyStateChanged();
+    }
+
+    public void ToggleScavengerItem(int itemId)
+    {
+        var item = ScavengerItems.FirstOrDefault(item => item.Id == itemId);
+        if (item == null)
+        {
+            return;
+        }
+
+        item.IsCompleted = !item.IsCompleted;
+
+        _ = SaveGameStateAsync();
         NotifyStateChanged();
     }
 
     public void ResetGame()
     {
         CurrentGameState = GameState.Start;
+        CurrentGameMode = GameMode.Bingo;
         Board = new();
+        ScavengerItems = new();
         WinningLine = null;
         ShowBingoModal = false;
-        _ = SaveGameStateAsync(); // Fire and forget
+        _ = SaveGameStateAsync();
         NotifyStateChanged();
     }
 
@@ -88,7 +135,9 @@ public class BingoGameService
                 if (data != null && data.Version == STORAGE_VERSION)
                 {
                     CurrentGameState = data.GameState;
+                    CurrentGameMode = data.GameMode;
                     Board = data.Board;
+                    ScavengerItems = data.ScavengerItems;
                     WinningLine = data.WinningLine;
                 }
             }
@@ -107,7 +156,9 @@ public class BingoGameService
             {
                 Version = STORAGE_VERSION,
                 GameState = CurrentGameState,
+                GameMode = CurrentGameMode,
                 Board = Board,
+                ScavengerItems = ScavengerItems,
                 WinningLine = WinningLine
             };
             var json = JsonSerializer.Serialize(data);
@@ -123,7 +174,9 @@ public class BingoGameService
     {
         public int Version { get; set; }
         public GameState GameState { get; set; }
+        public GameMode GameMode { get; set; }
         public List<BingoSquareData> Board { get; set; } = new();
+        public List<ScavengerItemData> ScavengerItems { get; set; } = new();
         public BingoLine? WinningLine { get; set; }
     }
 }

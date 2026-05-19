@@ -1,3 +1,5 @@
+@using SocOps.Models
+
 <div class="flex flex-col items-center justify-center min-h-full p-6">
     <div class="corporate-shell corporate-hero w-full max-w-md text-center">
         <div class="relative flex flex-col gap-6">
@@ -5,7 +7,7 @@
                 <span class="corporate-kicker mb-4">Soc Ops</span>
                 <h1 class="text-4xl font-bold text-gray-900 mb-3 leading-tight">Corporate Social Bingo</h1>
                 <p class="text-lg text-gray-600 mx-auto" style="max-width: 24rem;">
-                    A clean, executive interface for team icebreakers, workshops, and onboarding sessions.
+                    Choose a mode for team icebreakers, workshops, and onboarding sessions.
                 </p>
             </div>
 
@@ -15,37 +17,37 @@
                     <div class="corporate-feature">
                         <span class="corporate-dot"></span>
                         <div>
-                            <div class="font-semibold text-gray-900">Find a match</div>
-                            <div class="text-sm text-gray-600">Scan the room for someone who fits each prompt.</div>
+                            <div class="font-semibold text-gray-900">Bingo Mode</div>
+                            <div class="text-sm text-gray-600">5x5 board with a free center square.</div>
                         </div>
                     </div>
                     <div class="corporate-feature">
                         <span class="corporate-dot"></span>
                         <div>
-                            <div class="font-semibold text-gray-900">Mark the square</div>
-                            <div class="text-sm text-gray-600">Tap it once you confirm the answer.</div>
-                        </div>
-                    </div>
-                    <div class="corporate-feature">
-                        <span class="corporate-dot"></span>
-                        <div>
-                            <div class="font-semibold text-gray-900">Complete the line</div>
-                            <div class="text-sm text-gray-600">Build a full row, column, or diagonal to win.</div>
+                            <div class="font-semibold text-gray-900">Scavenger Hunt</div>
+                            <div class="text-sm text-gray-600">Simple checklist with progress tracking.</div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <button
-                @onclick="OnStart"
-                class="corporate-cta py-4 px-8 text-lg transition-all">
-                Start session
-            </button>
+            <div class="space-y-2">
+                <button
+                    @onclick="() => OnModeSelected.InvokeAsync(GameMode.Bingo)"
+                    class="corporate-cta py-4 px-8 text-lg transition-all">
+                    Start Bingo
+                </button>
+                <button
+                    @onclick="() => OnModeSelected.InvokeAsync(GameMode.ScavengerHunt)"
+                    class="corporate-cta py-4 px-8 text-lg transition-all">
+                    Start Scavenger Hunt
+                </button>
+            </div>
         </div>
     </div>
 </div>
 
 @code {
     [Parameter]
-    public EventCallback OnStart { get; set; }
+    public EventCallback<GameMode> OnModeSelected { get; set; }
 }
